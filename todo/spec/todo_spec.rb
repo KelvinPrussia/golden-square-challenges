@@ -7,6 +7,4 @@ RSpec.describe Todo do
       expect(todo.task).to eq "Walk the dog"
     end
   end
-
-  
 end
