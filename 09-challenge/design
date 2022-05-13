@@ -1,0 +1,201 @@
+1. Describe the Problem
+Put or write the user story here. Add any 
+clarifying notes you might have.
+
+As a user
+So that I can record my experiences
+I want to keep a regular diary
+#diary.rb
+
+As a user
+So that I can reflect on my experiences
+I want to read my past diary entries
+#diary_entries.rb
+#list_entries
+
+As a user
+So that I can reflect on my experiences in my busy 
+day
+I want to select diary entries to read based on how 
+much time I have and my reading speed
+#count_words
+#reading_time(wpm)
+#get_best_entry(wpm, minutes)
+
+As a user
+So that I can keep track of my tasks
+I want to keep a todo list along with my diary
+#todo_list.rb
+#todo.rb
+#list_todos
+
+As a user
+So that I can keep track of my contacts
+I want to see a list of all of the mobile phone 
+numbers in all my diary entries
+#get_phone_numbers
+
+2. Design the Class System
+Consider diagramming out the classes and their 
+relationships. Take care to focus on the details 
+you see as important, not everything. The diagram 
+below uses asciiflow.com but you could also use 
+excalidraw.com, draw.io, or miro.com
+
+Also design the interface of each class in 
+more detail.
+
+class Diary
+  def add_entry(entry) #entry is an instance of DiaryEntry
+
+  end
+
+  def entries
+    #reurns a list of entries
+  end
+
+end
+
+class DiaryEntry
+  def initialize(title, contents) #both title and contents are strings
+
+  end
+
+  def title
+    #returns title as a string
+  end
+
+  def contents
+    #returns contents as a string
+  end
+end
+
+class PhoneNumberCrawler
+  def initialize(diary) #diary is an instance of Diary
+  end
+
+  def extract_numbers
+    #returns a list of phone numbers
+    #across all diary entries
+  end
+end
+
+class DiaryReader
+  def initialize(wpm, diary)
+    #wpm is the number of words a user can read in a minute
+    #minutes in the number of minutes they can read for
+  end
+
+  def find_most_readable_in_time(time)
+    #returns the longest entry that user can 
+    #read in the given time
+  end
+end
+
+class TaskList
+  def add_task(task) #task is an instance of Task
+  end
+
+  def all
+    #returns a list of tasks
+  end
+end
+
+class Task
+  def initialize(title)
+  end
+
+  def title
+    #returns the title as a string
+  end
+end
+
+3. Create Examples as Integration Tests
+Create examples of the classes being used together 
+in different situations and combinations that 
+reflect the ways in which the system will be used.
+
+# EXAMPLE
+ #1
+diary = Diary.new
+diary_entry_1 = DiaryEntry.new("my title", "my contents")
+diary_entry_2 = DiaryEntry.new("my title two", "my contents two")
+diary.add_entry(diary_entry_1)
+diary.add_entry(diary_entry_2)
+expect (diary.entries) # => [diary_entry_1, diary_entry_2]
+
+#2 - fits exactly
+diary = Diary.new
+reader = DiaryReader.new(2, diary)
+diary_entry_1 = DiaryEntry.new("title1", "one")
+diary_entry_2 = DiaryEntry.new("title2", "one two")
+diary_entry_3 = DiaryEntry.new("title3", "one two three")
+diary_entry_4 = DiaryEntry.new("title4", "one two three four")
+diary_entry_5 = DiaryEntry.new("title5", "one two three four five")
+diary.add_entry(diary_entry_1)
+diary.add_entry(diary_entry_2)
+diary.add_entry(diary_entry_3)
+diary.add_entry(diary_entry_4)
+diary.add_entry(diary_entry_5)
+expect(reader.find_most_readable_in_time(2)) #=> [diary_entry_4]
+
+#3 - doesnt fit exactly
+diary = Diary.new
+reader = DiaryReader.new(2, diary)
+diary_entry_1 = DiaryEntry.new("title1", "one")
+diary_entry_2 = DiaryEntry.new("title2", "one two")
+diary_entry_3 = DiaryEntry.new("title3", "one two three")
+diary_entry_4 = DiaryEntry.new("title4", "one two three four five")
+diary.add_entry(diary_entry_1)
+diary.add_entry(diary_entry_2)
+diary.add_entry(diary_entry_3)
+diary.add_entry(diary_entry_4)
+expect(reader.find_most_readable_in_time(2)) #=> [diary_entry_3]
+
+#4 - none readable
+diary = Diary.new
+reader = DiaryReader.new(2, diary)
+diary_entry_1 = DiaryEntry.new("title1", "one two three four five")
+diary.add_entry(diary_entry_1)
+expect(reader.find_most_readable_in_time(2)).to eq nil
+
+#5 - nothing at all
+diary = Diary.new
+reader = DiaryReader.new(2, diary)
+expect(reader.find_most_readable_in_time(2)).to eq nil
+
+#6 - wpm invalid
+diary = Diary.new
+DiaryReader.new(2, diary) #should fail with 
+#"wpm must be above 0"
+
+#7
+task_list = TaskList.new
+task_1 = Task.new("walk the dog")
+task_2 = Task.new("buy milk")
+task_list.add(task_1)
+task_list.add(task_2)
+expect(task_list).to eq [task_1, task_2]
+
+#8
+diary = Diary.new
+phone_book = PhoneNumberCrawler.new(diary)
+diary.add(DiaryEntry.new("title1", "my friend 07800000000 is cool"))
+diary.add(DiaryEntry.new("title2", "my friends 07800000000, 07800000001, 07800000002 and 07800000002 are cool"))
+expect(phone_book.extract_numbers).to eq [
+  "07800000000",
+  "07800000001",
+  "07800000002"
+]
+
+4. Create Examples as Unit Tests
+Create examples, where appropriate, of the behaviour 
+of each relevant class at a more granular level of 
+detail.
+
+# Do these as we go along
+
+5. Implement the Behaviour
+After each test you write, follow the test-driving 
+process of red, green, refactor to implement the 
+behaviour.
